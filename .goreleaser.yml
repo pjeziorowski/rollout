@@ -1,0 +1,49 @@
+builds:
+  - main: main.go
+    binary: rollout
+    goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+archives:
+  - format_overrides:
+      - goos: windows
+        format: zip
+checksum:
+  name_template: 'checksums.txt'
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+brews:
+  - name: rollout-cli
+    goarm: 6
+    tap:
+      owner: pjeziorowski
+      name: pjeziorowski-rollout-cli
+    url_template: "https://github.com/pjeziorowski/rollout/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    commit_author:
+      name: pjeziorowski
+      email: patryk.jeziorowski@gmx.com
+    folder: Formula
+    description: "Publish your articles everywhere"
+    skip_upload: false
+    install: |
+      bin.install "rollout"
+scoop:
+  url_template: "https://github.com/pjeziorowski/rollout/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+  bucket:
+    owner: pjeziorowski
+    name: scoop-rollout-cli
+  commit_author:
+    name: pjeziorowski
+    email: patryk.jeziorowski@gmx.com
+  description: "Publish your articles everywhere"
+  persist:
+    - "data"
+    - "config.toml"
