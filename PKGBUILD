@@ -1,5 +1,5 @@
 
-pkgname=rollout-cli
+pkgname=rollout
 pkgver=tbd
 pkgrel=1
 pkgdesc="Rollout CLI"
