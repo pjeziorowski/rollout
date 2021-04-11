@@ -19,5 +19,5 @@ func init() {
 
 // GetCurrentVersion of the CLI
 func GetCurrentVersion() string {
-	return "0.0.1" // ci-version-check
+	return "0.0.2" // ci-version-check
 }
