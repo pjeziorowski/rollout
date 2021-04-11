@@ -69,7 +69,7 @@ func (h *Hashnode) hashnodeTags(tags []string) []hashnodeTag {
 		log.Fatal(err)
 	}
 
-	var desiredHashnodeTags []hashnodeTag
+	var desiredHashnodeTags = []hashnodeTag{}
 	for _, hashnodeTag := range hashnodeTagsData.TagCategories {
 		for _, desiredTag := range tags {
 			if strings.ToLower(hashnodeTag.Name) == strings.ToLower(desiredTag) {
