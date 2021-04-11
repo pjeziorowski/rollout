@@ -25,7 +25,7 @@ brews:
     goarm: 6
     tap:
       owner: pjeziorowski
-      name: rollout-cli
+      name: homebrew-rollout-cli
     url_template: "https://github.com/pjeziorowski/rollout/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
     commit_author:
       name: pjeziorowski
