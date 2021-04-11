@@ -19,13 +19,17 @@ func NewDevto(apiToken string) *Devto {
 func (d *Devto) Publish(title string, markdown string, tags []string, canonicalURL string) {
 	client := resty.New()
 
-	_, err := client.R().
+	r, err := client.R().
 		SetBody(newCreateDevtoPostPayload(title, markdown, tags, canonicalURL)).
 		SetHeader("api-key", d.apiToken).
 		Post("https://dev.to/api/articles")
 
 	if err != nil {
 		log.Fatal(err.Error())
+	}
+
+	if r.IsError() {
+		log.Fatal(string(r.Body()))
 	}
 }
 

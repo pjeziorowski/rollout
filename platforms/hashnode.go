@@ -25,7 +25,7 @@ func (h *Hashnode) Publish(title string, markdown string, tags []string, canonic
 	req := graphql.NewRequest(`
 		mutation($publication: String!, $title: String!, $markdown: String!, $tags: [TagsInput]!, $canonicalURL: String!) {
 		  createPublicationStory(
-			hideFromHashnodeFeed: true
+			hideFromHashnodeFeed: false
 			publicationId: $publication
 			input: {
 			  isRepublished: {
@@ -36,6 +36,7 @@ func (h *Hashnode) Publish(title string, markdown string, tags []string, canonic
 			  tags: $tags
 			}
 		  ) {
+			message
 			success
 		  }
 		}`) // TODO think of a cleaner way to manage GraphQL queries

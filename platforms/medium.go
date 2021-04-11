@@ -20,13 +20,17 @@ func NewMedium(publicationID string, apiToken string) *Medium {
 func (m *Medium) Publish(title string, markdown string, tags []string, canonicalURL string) {
 	client := resty.New()
 
-	_, err := client.R().
+	r, err := client.R().
 		SetBody(newCreateMediumPostPayload(title, markdown, tags, canonicalURL)).
 		SetHeader("Authorization", "Bearer "+m.apiToken).
 		Post("https://api.medium.com/v1/users/" + m.publicationID + "/posts")
 
 	if err != nil {
 		log.Fatal(err.Error())
+	}
+
+	if r.IsError() {
+		log.Fatal(string(r.Body()))
 	}
 }
 
