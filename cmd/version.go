@@ -17,6 +17,7 @@ func init() {
 	rootCmd.AddCommand(versionCmd)
 }
 
+// GetCurrentVersion of the CLI
 func GetCurrentVersion() string {
 	return "0.0.1" // ci-version-check
 }

@@ -31,16 +31,17 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-var hashnodeApiToken = ""
-var devtoApiToken = ""
-var mediumApiToken = ""
-var hashnodePublicationId = ""
-var mediumPublicationId = ""
+var hashnodeAPIToken = ""
+var devtoAPIToken = ""
+var mediumAPIToken = ""
+var hashnodePublicationID = ""
+var mediumPublicationID = ""
 
+// Publish markdown file to Hashnode, Medium and Dev.to
 func Publish(markdownFile string) {
-	hashnode := platforms.NewHashnode(hashnodeApiToken, hashnodePublicationId)
-	medium := platforms.NewMedium(mediumPublicationId, mediumApiToken)
-	devto := platforms.NewDevto(devtoApiToken)
+	hashnode := platforms.NewHashnode(hashnodeAPIToken, hashnodePublicationID)
+	medium := platforms.NewMedium(mediumPublicationID, mediumAPIToken)
+	devto := platforms.NewDevto(devtoAPIToken)
 
 	p := []platforms.Platform{hashnode, medium, devto}
 
@@ -66,16 +67,17 @@ func Publish(markdownFile string) {
 	if title == "" {
 		log.Fatal("Forgot title in markdown frontmatter? ")
 	}
-	canonicalUrl := cast.ToString(frontmatter["canonical_url"])
+	canonicalURL := cast.ToString(frontmatter["canonical_url"])
 	if title == "" {
 		log.Fatal("Forgot canonical URL in markdown frontmatter? ")
 	}
 
 	for _, platform := range p {
-		platform.Publish(title, markdown, tags, canonicalUrl)
+		platform.Publish(title, markdown, tags, canonicalURL)
 	}
 }
 
+// Execute CLI command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -84,11 +86,11 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&hashnodeApiToken, "HASHNODE_API_TOKEN", "", "")
-	rootCmd.PersistentFlags().StringVar(&mediumApiToken, "MEDIUM_API_TOKEN", "", "")
-	rootCmd.PersistentFlags().StringVar(&devtoApiToken, "DEVTO_API_TOKEN", "", "")
-	rootCmd.PersistentFlags().StringVar(&hashnodePublicationId, "HASHNODE_PUBLICATION_ID", "", "")
-	rootCmd.PersistentFlags().StringVar(&mediumPublicationId, "MEDIUM_PUBLICATION_ID", "", "")
+	rootCmd.PersistentFlags().StringVar(&hashnodeAPIToken, "HASHNODE_API_TOKEN", "", "")
+	rootCmd.PersistentFlags().StringVar(&mediumAPIToken, "MEDIUM_API_TOKEN", "", "")
+	rootCmd.PersistentFlags().StringVar(&devtoAPIToken, "DEVTO_API_TOKEN", "", "")
+	rootCmd.PersistentFlags().StringVar(&hashnodePublicationID, "HASHNODE_PUBLICATION_ID", "", "")
+	rootCmd.PersistentFlags().StringVar(&mediumPublicationID, "MEDIUM_PUBLICATION_ID", "", "")
 	err := rootCmd.MarkPersistentFlagRequired("HASHNODE_API_TOKEN")
 	err = rootCmd.MarkPersistentFlagRequired("MEDIUM_API_TOKEN")
 	err = rootCmd.MarkPersistentFlagRequired("DEVTO_API_TOKEN")

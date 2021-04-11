@@ -5,36 +5,39 @@ import (
 	"log"
 )
 
+// Medium is used to interact with Medium platform
 type Medium struct {
 	apiToken      string
-	publicationId string
+	publicationID string
 }
 
-func NewMedium(publicationId string, apiToken string) *Medium {
-	return &Medium{apiToken: apiToken, publicationId: publicationId}
+// NewMedium creates a new instance of Medium
+func NewMedium(publicationID string, apiToken string) *Medium {
+	return &Medium{apiToken: apiToken, publicationID: publicationID}
 }
 
-func (m *Medium) Publish(title string, markdown string, tags []string, canonicalUrl string) {
+// Publish publishes an article on Medium
+func (m *Medium) Publish(title string, markdown string, tags []string, canonicalURL string) {
 	client := resty.New()
 
 	_, err := client.R().
-		SetBody(NewCreateMediumPostPayload(title, markdown, tags, canonicalUrl)).
+		SetBody(newCreateMediumPostPayload(title, markdown, tags, canonicalURL)).
 		SetHeader("Authorization", "Bearer "+m.apiToken).
-		Post("https://api.medium.com/v1/users/" + m.publicationId + "/posts")
+		Post("https://api.medium.com/v1/users/" + m.publicationID + "/posts")
 
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 }
 
-type CreateMediumPostPayload struct {
+type createMediumPostPayload struct {
 	Title         string   `json:"title"`
 	ContentFormat string   `json:"contentFormat"`
 	Content       string   `json:"content"`
-	CanonicalUrl  string   `json:"canonical_url"`
+	CanonicalURL  string   `json:"canonical_url"`
 	Tags          []string `json:"tags"`
 }
 
-func NewCreateMediumPostPayload(title string, content string, tags []string, canonicalUrl string) *CreateMediumPostPayload {
-	return &CreateMediumPostPayload{Title: title, ContentFormat: "markdown", Content: content, Tags: tags, CanonicalUrl: canonicalUrl}
+func newCreateMediumPostPayload(title string, content string, tags []string, canonicalURL string) *createMediumPostPayload {
+	return &createMediumPostPayload{Title: title, ContentFormat: "markdown", Content: content, Tags: tags, CanonicalURL: canonicalURL}
 }

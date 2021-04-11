@@ -5,19 +5,22 @@ import (
 	"log"
 )
 
+// Devto is used to interact with dev.to platform
 type Devto struct {
 	apiToken string
 }
 
+// NewDevto creates a new instance of Devto
 func NewDevto(apiToken string) *Devto {
 	return &Devto{apiToken: apiToken}
 }
 
-func (d *Devto) Publish(title string, markdown string, tags []string, canonicalUrl string) {
+// Publish publishes an article on dev.to
+func (d *Devto) Publish(title string, markdown string, tags []string, canonicalURL string) {
 	client := resty.New()
 
 	_, err := client.R().
-		SetBody(NewCreateDevtoPostPayload(title, markdown, tags, canonicalUrl)).
+		SetBody(newCreateDevtoPostPayload(title, markdown, tags, canonicalURL)).
 		SetHeader("api-key", d.apiToken).
 		Post("https://dev.to/api/articles")
 
@@ -26,24 +29,24 @@ func (d *Devto) Publish(title string, markdown string, tags []string, canonicalU
 	}
 }
 
-type CreateDevtoPostPayload struct {
-	Article DevtoArticle `json:"article"`
+type createDevtoPostPayload struct {
+	Article devtoArticle `json:"article"`
 }
 
-func NewCreateDevtoPostPayload(title string, markdown string, tags []string, canonicalUrl string) *CreateDevtoPostPayload {
-	return &CreateDevtoPostPayload{Article: DevtoArticle{
+func newCreateDevtoPostPayload(title string, markdown string, tags []string, canonicalURL string) *createDevtoPostPayload {
+	return &createDevtoPostPayload{Article: devtoArticle{
 		Title:        title,
 		Markdown:     markdown,
 		Published:    true,
-		CanonicalUrl: canonicalUrl,
+		CanonicalURL: canonicalURL,
 		Tags:         tags,
 	}}
 }
 
-type DevtoArticle struct {
+type devtoArticle struct {
 	Title        string   `json:"title"`
 	Markdown     string   `json:"body_markdown"`
 	Published    bool     `json:"published"`
-	CanonicalUrl string   `json:"canonical_url"`
+	CanonicalURL string   `json:"canonical_url"`
 	Tags         []string `json:"tags"`
 }

@@ -7,26 +7,29 @@ import (
 	"strings"
 )
 
+// Hashnode is used to interact with Hashnode platform
 type Hashnode struct {
 	apiToken      string
-	publicationId string
+	publicationID string
 }
 
-func NewHashnode(apiToken string, publicationId string) *Hashnode {
-	return &Hashnode{apiToken: apiToken, publicationId: publicationId}
+// NewHashnode creates a new instance of Hashnode
+func NewHashnode(apiToken string, publicationID string) *Hashnode {
+	return &Hashnode{apiToken: apiToken, publicationID: publicationID}
 }
 
-func (h *Hashnode) Publish(title string, markdown string, tags []string, canonicalUrl string) {
+// Publish publishes an article on Hashnode
+func (h *Hashnode) Publish(title string, markdown string, tags []string, canonicalURL string) {
 	hashnodeClient := graphql.NewClient("https://api.hashnode.com/")
 
 	req := graphql.NewRequest(`
-		mutation($publication: String!, $title: String!, $markdown: String!, $tags: [TagsInput]!, $canonicalUrl: String!) {
+		mutation($publication: String!, $title: String!, $markdown: String!, $tags: [TagsInput]!, $canonicalURL: String!) {
 		  createPublicationStory(
 			hideFromHashnodeFeed: true
 			publicationId: $publication
 			input: {
 			  isRepublished: {
-			  originalArticleURL: $canonicalUrl
+			  originalArticleURL: $canonicalURL
 			  }
 			  title: $title
 			  contentMarkdown: $markdown
@@ -37,19 +40,19 @@ func (h *Hashnode) Publish(title string, markdown string, tags []string, canonic
 		  }
 		}`) // TODO think of a cleaner way to manage GraphQL queries
 	req.Header.Set("Authorization", h.apiToken)
-	req.Var("publication", h.publicationId)
+	req.Var("publication", h.publicationID)
 	req.Var("title", title)
 	req.Var("markdown", markdown)
 	hashnodeTags := h.hashnodeTags(tags)
 	req.Var("tags", hashnodeTags)
-	req.Var("canonicalUrl", canonicalUrl)
+	req.Var("canonicalURL", canonicalURL)
 
 	if err := hashnodeClient.Run(context.Background(), req, nil); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func (h *Hashnode) hashnodeTags(tags []string) []HashnodeTag {
+func (h *Hashnode) hashnodeTags(tags []string) []hashnodeTag {
 	hashnodeClient := graphql.NewClient("https://api.hashnode.com/")
 	req := graphql.NewRequest(`
 		query {
@@ -59,14 +62,14 @@ func (h *Hashnode) hashnodeTags(tags []string) []HashnodeTag {
   			}
 		}`) // TODO think of a cleaner way to manage GraphQL queries
 	req.Header.Set("Authorization", h.apiToken)
-	req.Var("publication", h.publicationId)
+	req.Var("publication", h.publicationID)
 
-	var hashnodeTagsData HashnodeTags
+	var hashnodeTagsData hashnodeTags
 	if err := hashnodeClient.Run(context.Background(), req, &hashnodeTagsData); err != nil {
 		log.Fatal(err)
 	}
 
-	var desiredHashnodeTags []HashnodeTag
+	var desiredHashnodeTags []hashnodeTag
 	for _, hashnodeTag := range hashnodeTagsData.TagCategories {
 		for _, desiredTag := range tags {
 			if strings.ToLower(hashnodeTag.Name) == strings.ToLower(desiredTag) {
@@ -78,15 +81,15 @@ func (h *Hashnode) hashnodeTags(tags []string) []HashnodeTag {
 	return desiredHashnodeTags
 }
 
-type HashnodeTagsData struct {
-	Data HashnodeTags `json:"data"`
+type hashnodeTagsData struct {
+	Data hashnodeTags `json:"data"`
 }
 
-type HashnodeTags struct {
-	TagCategories []HashnodeTag `json:"tagCategories"`
+type hashnodeTags struct {
+	TagCategories []hashnodeTag `json:"tagCategories"`
 }
 
-type HashnodeTag struct {
+type hashnodeTag struct {
 	Name string `json:"name"`
-	Id   string `json:"_id"`
+	ID   string `json:"_id"`
 }
